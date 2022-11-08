@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Callback Hell</title>
+</head>
+
+<body>
+
+  <script>
+
+    function getData(url, callbackFn) {
+
+      // Getting data through HTTP ... this takes some time
+
+      const data = `Data retrieved from ${url}`
+
+      const randTime = Math.random() * 3000
+      setTimeout(() => {
+        callbackFn(data)
+      }, randTime)
+    }
+
+
+    // In this way, these operations run in paraller
+    // In this way, we don't enforce an order, whoever finishes first
+    // will print the data first
+    // getData('https://something/', (data) => console.log(data))
+    // getData('https://another.server/', (data) => console.log(data))
+    // getData('https://the.third.server/', (data) => console.log(data))
+
+
+    // In this way, we enforce an order in chain of async operations.
+    // We use the data from the previous one into the subsequent one
+    getData('https://myserver/loggedUserId', (loggedUserId) => {
+      console.log("I got the user Id...")
+      getData(`https://myserver/posts/${loggedUserId}`, (userPosts) => {
+        console.log("I got the posts...")
+        getData(`https://myserver/comments/${userPosts}`, (comments) => {
+          console.log("Finally got the comments...")
+        })
+      })
+    })
+
+    // Wouldn't it be nice to do something like this:
+    // getData('https://myserver/loggedUserId')
+    //   .then((loggedUserId) => getData(`https://myserver/posts/${loggedUserId}`))
+    //   .then((userPosts) => getData(`https://myserver/comments/${userPosts}`))
+    //   .then((comments) => console.log("Finally got the comments..."))
+
+    // This is why promises where invented, under the hood they are just callbacks...
+    // But JS hides it from us :)
+  </script>
+</body>
+
+</html>
