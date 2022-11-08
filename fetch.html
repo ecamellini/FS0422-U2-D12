@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fetching Users</title>
+
+  <style>
+    .container {
+      max-width: 600px;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .error {
+      color: red
+    }
+
+  </style>
+</head>
+
+<body>
+  <h1>Users</h1>
+  <h2 class="error"></h2>
+  <div class="container">
+
+  </div>
+  <script>
+    fetch('https://randomuser.me/api/?results=50&nat=FR')
+      .then((response) => response.json()) // Response.json is a function that returns a Promise for the JSON already parsed by JS
+      .then((data) => {
+        console.log(data)
+        let results = data.results
+
+        for (let i = 0; i < results.length; i++) {
+          let user = results[i]
+
+          let userDiv = document.createElement('div')
+          userDiv.innerHTML = `<div>
+                                  <img src=${user.picture.medium} />
+                                  <div>${user.name.first} ${user.name.last}</div>
+                               </div>`
+
+          let container = document.querySelector('.container')
+
+          container.appendChild(userDiv)
+        }
+      })
+      .catch((error) => document.querySelector('.error').innerText = error)
+  </script>
+</body>
+
+</html>
